@@ -5,6 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SivasaiPC - Payment</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .payment-method {
+            display: none;
+        }
+        
+        .payment-method.active {
+            display: block;
+        }
+        
+        .payment-option {
+            cursor: pointer;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+            display: inline-block;
+        }
+        
+        .payment-option.active {
+            background-color: #f0f0f0;
+            border-color: #999;
+        }
+        
+        .success-message {
+            display: none;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -139,11 +171,9 @@
                 `;
                 itemsContainer.appendChild(itemElement);
             });
-            
-            // Calculate shipping and total (matches your cart logic)
+
             let shipping = subtotal > 0 ? 10 : 0;
-            
-            // Free shipping for orders over $100
+
             if (subtotal >= 100) {
                 shipping = 0;
             }
@@ -155,6 +185,24 @@
             document.getElementById('payment-total').textContent = `$${total.toFixed(2)}`;
         }
 
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function() {
+
+                document.querySelectorAll('.payment-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+
+                this.classList.add('active');
+
+                const method = this.getAttribute('data-method');
+
+                document.querySelectorAll('.payment-method').forEach(method => {
+                    method.classList.remove('active');
+                });
+
+                document.getElementById(`${method}-method`).classList.add('active');
+            });
+        });
         
         document.getElementById('pay-upi-btn').addEventListener('click', () => {
             const upiId = document.getElementById('upi-id').value.trim();
@@ -174,7 +222,7 @@
         });
         
         function processPayment() {
-            localStorage.setItem('cart', '[]');
+            localStorage.setItem('sivasaipc_cart', '[]');
             
             document.getElementById('payment-success').style.display = 'block';
             
